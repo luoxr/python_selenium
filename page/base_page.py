@@ -29,6 +29,7 @@ class BasePage(object):
 
     def find_element(self, locator):
         """定位一个元素
+        is_displayed: 存在于dom树中
         :param locator: 元祖类型
         :return:
         """
@@ -37,6 +38,23 @@ class BasePage(object):
                 .until(lambda x: x.find_element(*locator).is_displayed)
             element = self.base_driver.find_element(*locator)
             return element
+        except TimeoutException:
+            print(u"请求超时，未能找到元素 %s" % (locator,))
+        except NoSuchElementException:
+            print(u"当前页面中未能找到元素 %s" % (locator,))
+        except Exception as msg:
+            print(u"当前页面未能找到元素 %s，错误原因：%s" % (locator, msg))
+
+    def visibility_element(self, locator):
+        """
+        判断某元素是否不存在于dom中或不可见
+        :param locator:
+        :return: 不可见返回True
+        """
+        try:
+            WebDriverWait(driver=self.base_driver, timeout=self.timeout)\
+                .until(EC.invisibility_of_element_located(locator))
+            return True
         except TimeoutException:
             print(u"请求超时，未能找到元素 %s" % (locator,))
         except NoSuchElementException:

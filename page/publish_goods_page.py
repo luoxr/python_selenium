@@ -9,7 +9,13 @@ class PublishGoodsPage(BasePage):
         # 寻物内容
         title_content_loc = (By.ID, "titlecontent")
         # 上传图片按钮
-        pic_loc = (By.CSS_SELECTOR, "#find-upload-pic input[type='file']")
+        upload_pic_loc = (By.CSS_SELECTOR, "#find-upload-pic input[type='file']")
+        # 图片
+        pic_loc = (By.CSS_SELECTOR, "#find-upload-pic > span")
+        # 图片右上角的关闭按钮
+        del_pic_loc = (By.CSS_SELECTOR, "#find-upload-pic > span > a.delpng")
+        # 图片box，上传3张后，display:none
+        pic_box_loc = (By.ID, "find-upload-btn-box")
         # 定位按钮
         location_loc = (By.ID, "locationCity")
         # 可见权限按钮
@@ -23,7 +29,7 @@ class PublishGoodsPage(BasePage):
         # 确认发布按钮
         publish_loc = (By.CLASS_NAME, "find-publish-btn")
         # 发布成功/失败提示（.weui-toast_cancel）
-        publish_success_loc = (By.CSS_SELECTOR, ".weui-toast--visible p.weui-toast_content")
+        publish_success_loc = (By.CSS_SELECTOR, ".weui-toast p.weui-toast_content")
 
         def open_publish_goods(self):
             """打开发布页面
@@ -40,12 +46,34 @@ class PublishGoodsPage(BasePage):
             """
             self.send_keys(self.title_content_loc, text=text)
 
+        def title_content_value(self):
+            """
+            查询找货内容
+            :return:
+            """
+            return self.find_element(self.title_content_loc).get_attribute("value")
+
         def upload_pic(self, pic):
             """上传图片
             :param pic: 图片路径
             :return:
             """
-            self.send_keys(self.pic_loc, text=pic)
+            self.send_keys(self.upload_pic_loc, text=pic)
+
+        def upload_success_pic(self):
+            """
+            查找图片，判断图片是否上传成功
+            :return: 返回elements
+            """
+            elements = self.find_elements(self.pic_loc)
+            return elements
+
+        def pic_box_display(self):
+            """
+            查找box，判断上传按钮是否在
+            :return: False -- 不存在，已3张，True -- 存在，不足3张
+            """
+            return self.visibility_element(self.pic_box_loc)
 
         def add_location(self):
             """添加位置
@@ -88,7 +116,7 @@ class PublishGoodsPage(BasePage):
             element = self.find_element(self.active_tag_loc)
             if element:
                 return element.text
-            return False
+            return None
 
         def publish(self):
             """
@@ -99,7 +127,10 @@ class PublishGoodsPage(BasePage):
 
         def is_success(self):
             """
-            是否发布成功
+            是否发布成功，三种提示：
+            1、找货描述，图片至少填一项
+            2、请选择一个标签
+            3、发布成功
             :return: None 成功
             """
             element = self.find_element(self.publish_success_loc)
