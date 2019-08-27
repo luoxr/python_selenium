@@ -9,6 +9,8 @@ def get_image_path(pic_name):
     :param pic_name: 图片名，xxx.jpg
     :return:
     """
+    if pic_name == "" and not pic_name:
+        return False
     current_path = os.path.abspath(__file__)
     father_path = current_path.split("common")[0]
     pic_path = os.path.join(father_path, "data", "image", pic_name)

@@ -9,7 +9,7 @@ from selenium.common.exceptions import *
 
 class BasePage(object):
     """page Object设计模式，所有页面的基类，定义公共方法、变量"""
-    def __init__(self, base_driver, base_url, timeout=10):
+    def __init__(self, base_driver, base_url, timeout=5):
         self.base_driver = base_driver
         self.base_url = base_url
         self.timeout = timeout
@@ -43,24 +43,34 @@ class BasePage(object):
         except NoSuchElementException:
             print(u"当前页面中未能找到元素 %s" % (locator,))
         except Exception as msg:
-            print(u"当前页面未能找到元素 %s，错误原因：%s" % (locator, msg))
+            print(u"当前页面未能找到元素 %s，%s" % (locator, msg))
 
     def visibility_element(self, locator):
         """
         判断某元素是否不存在于dom中或不可见
         :param locator:
-        :return: 不可见返回True
+        :return: 不可见返回True，可见为None
         """
         try:
             WebDriverWait(driver=self.base_driver, timeout=self.timeout)\
                 .until(EC.invisibility_of_element_located(locator))
             return True
-        except TimeoutException:
-            print(u"请求超时，未能找到元素 %s" % (locator,))
-        except NoSuchElementException:
-            print(u"当前页面中未能找到元素 %s" % (locator,))
         except Exception as msg:
-            print(u"当前页面未能找到元素 %s，错误原因：%s" % (locator, msg))
+            print(u"元素可见，%s" % msg)
+
+    def value_present(self, locator, text):
+        """
+        判断文本是否存在于元素的value值中
+        :param locator: 元素
+        :param text: 文本
+        :return: 存在返回True
+        """
+        try:
+            WebDriverWait(driver=self.base_driver, timeout=self.timeout)\
+                .until(EC.text_to_be_present_in_element_value(locator, text))
+            return True
+        except Exception as msg:
+            print(u"元素%s 不存在该value值，%s" % (locator, msg))
 
     def find_elements(self, locator):
         """定位一组元素
@@ -77,7 +87,7 @@ class BasePage(object):
         except NoSuchElementException:
             print(u"当前页面中未能找到元素 %s" % (locator,))
         except Exception as msg:
-            print(u"当前页面未能找到元素 %s，错误原因：%s" % (locator, msg))
+            print(u"当前页面未能找到元素 %s，%s" % (locator, msg))
 
     def click(self, locator):
         """点击元素
@@ -109,24 +119,3 @@ class BasePage(object):
 
     def refresh_(self):
         self.base_driver.refresh()
-
-# def get_token():
-#     """获得用户token
-#     :return:
-#     """
-#     url = "http://10.10.10.101:8083/rest/mobile/common/vip/login"
-#     data = {
-#         "phone": "18012340004",
-#         "password": "dec5d7b46b13d0c39c3f185de36b25bf",
-#         "plat": 3
-#     }
-#     headers = {
-#         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-#     }
-#     response = requests.post(url=url, data=data, headers=headers)
-#     is_success = response.json()["success"]
-#     token = None
-#     if is_success:
-#         token = response.json()["data"]["restToken"]
-#     return token
-

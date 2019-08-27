@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from TestSelenium.page.login_page import LoginPage
 from TestSelenium.page.publish_goods_page import PublishGoodsPage
+from TestSelenium.page.publish_article_page import PublishArticlePage
 
 base_url = "http://10.10.10.101:5500/"
 
@@ -18,7 +19,8 @@ def get_page(page_name, driver):
     url = base_url + page_name + ".html"
     page = {
         "login": LoginPage(base_driver=driver, base_url=url),
-        "find-publish": PublishGoodsPage(base_driver=driver, base_url=url)
+        "find-publish": PublishGoodsPage(base_driver=driver, base_url=url),
+        "find-publisharticle": PublishArticlePage(base_driver=driver, base_url=url)
     }
 
     return page.get(page_name)

@@ -79,10 +79,3 @@ class PublishGoodsTest(BaseTest):
             self.assertEqual("请选择一个标签", page.is_success(), msg="请选择一个标签 功能错误")
         else:
             self.assertEqual("发布成功", page.is_success(), msg="发布找货失败")
-        # if title_content.strip() == "" and (pic_path.strip() == "" or pic_elements is None):
-        #     self.assertEqual("找货描述，图片至少填一项", page.is_success(), msg="找货描述，图片至少填一项功能错误")
-        # # 标签
-        # if goods_data["tag_name"].strip() == "" and tag_active is False:
-        #     self.assertEqual("请选择一个标签", page.is_success(), msg="请选择一个标签功能错误")
-        #
-        # self.assertEqual("发布成功", page.is_success(), msg="发布找货失败")
